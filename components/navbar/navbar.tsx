@@ -11,6 +11,24 @@ const FontMonsterrat = Montserrat({
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
 
+    const [showPopup, setShowPopup] = useState(false);
+
+    const handleJeaneClick = () => {
+      setShowPopup(!showPopup);
+    };
+
+    const handleLogout = () => {
+        // Hapus token JWT dari localStorage
+        localStorage.removeItem('token');
+    
+        // Tambahkan logika logout lainnya di sini, seperti mengarahkan ke halaman login
+        console.log('Logged out successfully');
+    
+        // Menutup popup setelah logout
+        setShowPopup(false);
+      };
+    
+
     return (
         <nav className={`w-full h-14 bg-white ${FontMonsterrat.className}`}>
             <div className="mx-10 flex justify-between items-center h-full px-4">
@@ -27,7 +45,7 @@ export default function Navbar() {
                             <path d="M12 16H7.00001C6.01506 16 5.52259 16 5.22538 15.6762C4.92818 15.3523 4.9669 14.9018 5.04435 14.0008C5.10026 13.3503 5.22669 12.9125 5.51257 12.5858C6.02514 12 6.8501 12 8.50001 12H15.5C17.1499 12 17.9749 12 18.4874 12.5858C18.7733 12.9125 18.8998 13.3503 18.9557 14.0008C19.0331 14.9018 19.0718 15.3523 18.7746 15.6762C18.4774 16 17.985 16 17 16H16" stroke="#b5b5b5" stroke-width="1.5" stroke-linecap="round"></path> 
                             <path d="M7 8C7 6.13077 7 5.19615 7.40192 4.5C7.66523 4.04394 8.04394 3.66523 8.5 3.40192C9.19615 3 10.1308 3 12 3C13.8692 3 14.8038 3 15.5 3.40192C15.9561 3.66523 16.3348 4.04394 16.5981 4.5C17 5.19615 17 6.13077 17 8V12H7V8Z" stroke="#b5b5b5" stroke-width="1.5"></path> </g>
                         </svg>
-                        <a href="pelayan" className="text-sm text-black">Meja</a>
+                        <a href="/pelayan" className="text-sm text-black">Meja</a>
                     </div>
                     <div className="flex items-center space-x-2 cursor-pointer hover:text-gray-400">
                         <svg
@@ -104,12 +122,49 @@ export default function Navbar() {
                         <a href="/pelayan/pesanan" className="text-sm text-black">Pesanan</a>
                     </div>
                 </div>
-                <div className="hidden md:flex space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2">
-                            </path><circle cx="12" cy="7" r="4"></circle></svg>
-                    <h1 className="items-center justify-center">Jeane</h1>
-                </div>
+                <div className="relative">
+                    <div className="hidden md:flex space-x-2">
+                        <svg
+                        onClick={handleJeaneClick}
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="cursor-pointer"
+                        >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <h1
+                        onClick={handleJeaneClick}
+                        className="items-center justify-center cursor-pointer"
+                        >
+                        Jeane
+                        </h1>
+                    </div>
+
+                    {showPopup && (
+                        <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 w-full max-w-sm flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out z-50">
+                        <div className="bg-white rounded-lg shadow-lg p-6 space-y-4">
+                            <h2 className="text-2xl font-bold text-gray-800">Halo Jeane</h2>
+                            <p className="text-gray-600">Selamat datang kembali! Apakah Anda ingin keluar?</p>
+                            <div className="flex justify-end">
+                            <button
+                                onClick={handleLogout}
+                                className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded-md transition duration-200 ease-in-out"
+                            >
+                                Logout
+                            </button>
+                            </div>
+                        </div>
+                        </div>
+                    )}
+                    </div>
                 <div className="md:hidden flex items-center">
                     <button onClick={() => setIsOpen(!isOpen)} className="text-black focus:outline-none">
                         <svg
@@ -141,7 +196,7 @@ export default function Navbar() {
                                 <path d="M12 16H7.00001C6.01506 16 5.52259 16 5.22538 15.6762C4.92818 15.3523 4.9669 14.9018 5.04435 14.0008C5.10026 13.3503 5.22669 12.9125 5.51257 12.5858C6.02514 12 6.8501 12 8.50001 12H15.5C17.1499 12 17.9749 12 18.4874 12.5858C18.7733 12.9125 18.8998 13.3503 18.9557 14.0008C19.0331 14.9018 19.0718 15.3523 18.7746 15.6762C18.4774 16 17.985 16 17 16H16" stroke="#b5b5b5" stroke-width="1.5" stroke-linecap="round"></path> 
                                 <path d="M7 8C7 6.13077 7 5.19615 7.40192 4.5C7.66523 4.04394 8.04394 3.66523 8.5 3.40192C9.19615 3 10.1308 3 12 3C13.8692 3 14.8038 3 15.5 3.40192C15.9561 3.66523 16.3348 4.04394 16.5981 4.5C17 5.19615 17 6.13077 17 8V12H7V8Z" stroke="#b5b5b5" stroke-width="1.5"></path> </g>
                             </svg>
-                            <a href="meja" className="text-sm text-black">Meja</a>
+                            <a href="" className="text-sm text-black">Meja</a>
                         </div>
                         <div className="flex items-center space-x-2 cursor-pointer hover:text-gray-400">
                             <svg
