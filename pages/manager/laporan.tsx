@@ -3,11 +3,10 @@ import Navbar from '@/components/navbar/navbar';
 import "@/app/globals.css";
 
 // Import Image
-import PeopleIcon from "@/public/assets/img/people.png";
 import EarnIcon from "@/public/assets/img/earn.png";
 import Sidebar from '@/components/navbar/sidebar';
 
-// Define the type for the order and customer objects
+// Define the type for the order objects
 interface Order {
   kode_pesanan: number;
   nomor_meja: number;
@@ -19,20 +18,11 @@ interface Order {
   id_kasir: number;
 }
 
-interface Pelanggan {
-  id_pelanggan: number;
-  nama_pelanggan: string;
-  email: string;
-  nomor_meja: number;
-  nomor_hp: string;
-}
-
-function Kasir() {
+function Laporan() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [dailyOrders, setDailyOrders] = useState<Order[]>([]);
   const [weeklyOrders, setWeeklyOrders] = useState<Order[]>([]);
   const [monthlyOrders, setMonthlyOrders] = useState<Order[]>([]);
-  const [pelanggan, setPelanggan] = useState<Pelanggan[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -48,14 +38,6 @@ function Kasir() {
         filterOrders(data);
       })
       .catch(error => console.error('Error fetching orders:', error));
-
-    // Fetch customers data from API
-    fetch('https://api.smartresto.xyz/api/pelanggan/get')
-      .then(response => response.json())
-      .then(data => {
-        setPelanggan(data);
-      })
-      .catch(error => console.error('Error fetching customers:', error));
   }, []);
 
   const filterOrders = (data: Order[]) => {
@@ -75,7 +57,6 @@ function Kasir() {
     setWeeklyOrders(weekly);
     setMonthlyOrders(monthly);
 };
-
 
   return (
     <div>
@@ -108,7 +89,7 @@ function Kasir() {
               </div>
               <div className="bg-white md:w-full w-72  rounded-lg shadow p-4">
                 <div className='flex items-center'>
-                  <img src={PeopleIcon.src} alt="People Icon" className='w-12' />
+                  <img src={EarnIcon.src} alt="Earn Icon" className='w-12' />
                   <h2 className="text-md font-bold ml-2">Total Orderan Harian</h2>
                 </div>
                 <p className="text-2xl font-bold">{dailyOrders.length}</p>
@@ -117,7 +98,7 @@ function Kasir() {
               </div>
               <div className="bg-white md:w-full w-72 rounded-lg shadow p-4">
                 <div className='flex items-center'>
-                  <img src={PeopleIcon.src} alt="People Icon" className='w-12' />
+                  <img src={EarnIcon.src} alt="Earn Icon" className='w-12' />
                   <h2 className="text-md font-bold ml-2">Total Orderan Mingguan</h2>
                 </div>
                 <p className="text-2xl font-bold">{weeklyOrders.length}</p>
@@ -126,37 +107,10 @@ function Kasir() {
               </div>
             </div>
           </div>
-
-          {/* Tabel Daftar Pelanggan */}
-          <h2 className="text-xl font-bold mt-8">Daftar Pelanggan</h2>
-          <div className="overflow-x-auto mt-4">
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-              <thead>
-                <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                  <th className="py-3 px-4 text-left w-20">ID</th>
-                  <th className="py-3 px-4 text-left">Nama Pelanggan</th>
-                  <th className="py-3 px-4 text-left">Email</th>
-                  <th className="py-3 px-4 text-left">Nomor Meja</th>
-                  <th className="py-3 px-4 text-left">Nomor HP</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-600 text-sm font-light">
-                {pelanggan.map((cust) => (
-                  <tr key={cust.id_pelanggan} className="border-b border-gray-200 hover:bg-gray-100">
-                    <td className="py-3 px-4 text-left whitespace-nowrap">{cust.id_pelanggan}</td>
-                    <td className="py-3 px-4 text-left">{cust.nama_pelanggan}</td>
-                    <td className="py-3 px-4 text-left">{cust.email}</td>
-                    <td className="py-3 px-4 text-left">{cust.nomor_meja}</td>
-                    <td className="py-3 px-4 text-left">{cust.nomor_hp}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </div>
       </div>
     </div>
   );
 }
 
-export default Kasir;
+export default Laporan;

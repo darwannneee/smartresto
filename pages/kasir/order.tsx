@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Modal from "react-modal";
 
 import OrderImage from "@/public/assets/img/order.png";
+import Sidebar from "@/components/navbar/sidebar";
 
 // Custom styles for Modal
 const customStyles = {
@@ -34,10 +35,15 @@ export default function Order() {
     const [selectedOrder, setSelectedOrder] = useState<PesananItem | null>(null);
     const [step, setStep] = useState(1);
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
 
     useEffect(() => {
         const fetchData = () => {
-            fetch("http://localhost:3001/api/pesanan/get")
+            fetch("https://api.smartresto.xyz/api/pesanan/get")
                 .then(response => response.json())
                 .then(data => {
                     const filteredData = data.filter((item: PesananItem) => item.status_pesanan === 'bayar');
@@ -54,7 +60,7 @@ export default function Order() {
 
     const updateStatusPesanan = async (kode_pesanan: string, status_pesanan: string) => {
         try {
-            const response = await fetch("http://localhost:3001/api/pesanan/ubah", {
+            const response = await fetch("https://api.smartresto.xyz/api/pesanan/ubah", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -99,9 +105,11 @@ export default function Order() {
     };
 
     return (
-        <>
-            <Navbar />
-            <main className="p-4 px-12 pt-5 bg-gray-100 min-h-screen">
+        <div>
+        <Navbar toggleSidebar={toggleSidebar} />
+        <div className="flex">
+            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            <main className="p-4 md:pl-56 px-12 pt-24 bg-white min-h-screen w-full">
                 <h1 className="text-2xl font-bold mb-4">Daftar Pesanan</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {pesanan.map((item) => (
@@ -157,7 +165,7 @@ export default function Order() {
                     <div>
                         <h2 className="text-xl font-bold mb-4">Scan {paymentMethod}</h2>
                         <p className="text-gray-500 mb-4">Silakan scan kode berikut untuk menyelesaikan pembayaran.</p>
-                        <img src="/path/to/qr-code.png" alt="QR Code" className="mb-4" />
+                        <img src="https://www.emoderationskills.com/wp-content/uploads/2010/08/QR1.jpg" alt="QR Code" className="mb-4" />
                         <button 
                             className="bg-green-500 w-full h-10 rounded-lg p-2 text-center text-white"
                             onClick={handleStatusChange}
@@ -167,6 +175,7 @@ export default function Order() {
                     </div>
                 )}
             </Modal>
-        </>
+        </div>
+        </div>
     );
 }

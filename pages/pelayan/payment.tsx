@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '@/components/navbar/navbar';
 import "@/app/globals.css";
+import Sidebar from '@/components/navbar/sidebar';
 
 const Payment = () => {
     const router = useRouter();
@@ -16,9 +17,14 @@ const Payment = () => {
     const [expiryDate, setExpiryDate] = useState('');
     const [cvv, setCvv] = useState('');
     const [message, setMessage] = useState('');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
 
     const createCustomer = async () => {
-        const response = await fetch('http://localhost:3001/api/pelanggan', {
+        const response = await fetch('https://api.smartresto.xyz/api/pelanggan', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -40,7 +46,7 @@ const Payment = () => {
     };
 
     const createOrder = async (id_pelanggan: any) => {
-        const response = await fetch('http://localhost:3001/api/pesanan', {
+        const response = await fetch('https://api.smartresto.xyz/api/pesanan', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -63,13 +69,13 @@ const Payment = () => {
     };
 
     const updateMejaStatus = async () => {
-        const response = await fetch(`http://localhost:3001/api/meja/${table}`, {
+        const response = await fetch(`https://api.smartresto.xyz/api/meja/${table}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                status_meja: 'occupied',
+                status_meja: 'tidak tersedia',
             }),
         });
 
@@ -94,9 +100,11 @@ const Payment = () => {
     };
 
     return (
-        <main>
-            <Navbar />
-            <div className="min-h-screen bg-gray-100 p-6 flex justify-center items-center">
+        <div>
+            <Navbar toggleSidebar={toggleSidebar} />
+            <div className="">
+                <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            <div className="min-h-screen bg-gray-100 p-6 pt-32 flex justify-center items-center">
                 <div className="bg-white p-8 rounded shadow-md w-full max-w-lg">
                     <h2 className="text-2xl font-bold mb-4">Detail Pesanan</h2>
                     <div className="mb-4">
@@ -132,10 +140,11 @@ const Payment = () => {
                             <span className="font-bold">Meja</span>
                             <span className="font-bold">#{table}</span>
                         </div>
-                        {parsedCart.map((cartItem: { item: { nama_menu: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; harga_menu: string; }; quantity: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; }, index: React.Key | null | undefined) => (
+                        {parsedCart.map((cartItem: { item: {
+                            harga_menu: string; nama_menu: string }; quantity: number; }, index: number) => (
                             <div key={index} className="flex justify-between items-center mb-2">
                                 <span>{cartItem.item.nama_menu} x {cartItem.quantity}</span>
-                                <span>Rp {parseFloat(cartItem.item.harga_menu as string) * Number(cartItem.quantity || 0)}</span>
+                                <span>Rp {parseFloat(cartItem.item.harga_menu) * cartItem.quantity}</span>
                             </div>
                         ))}
                         <div className="flex justify-between items-center">
@@ -150,7 +159,8 @@ const Payment = () => {
                     {message && <div className="mt-4 p-2 bg-green-100 text-green-700 rounded">{message}</div>}
                 </div>
             </div>
-        </main>
+            </div>
+        </div>
     );
 }
 

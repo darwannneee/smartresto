@@ -1,6 +1,7 @@
 import { useState, useEffect, ReactNode, Key } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from "@/components/navbar/navbar";
+import Sidebar from "@/components/navbar/sidebar";
 import "@/app/globals.css";
 import { Roboto, Open_Sans } from "next/font/google";
 
@@ -35,10 +36,15 @@ export default function Menu() {
     const [cart, setCart] = useState<{ item: any, quantity: number }[]>([]);
     const router = useRouter();
     const { table } = router.query;
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
 
     useEffect(() => {
         const getMenu = async () => {
-            const response = await fetch('http://localhost:3001/api/menu');
+            const response = await fetch('https://api.smartresto.xyz/api/menu');
             const result = await response.json();
             setMenuItems(result);
 
@@ -77,67 +83,70 @@ export default function Menu() {
     };
 
     return (
-        <main>
-            <Navbar />
-            <div className="min-h-screen px-6 sm:px-6 md:px-16 pt-6">
-                <h1 className={`text-3xl font-bold mb-4 ${RobotoBold.className}`}>Explore Our Best Menu</h1>
-                <p className={`text-sm text-gray-500 mb-8 ${OpenSansFont.className}`}>Pie biological ginger tasty apples taste restaurant drink cupcake vegetables lunch fruit Relish liquor sour java gluten free.</p>
-                <div className={`flex flex-col md:flex-row ${OpenSansFont.className}`}>
-                    <div className="md:w-1/4 mb-6 md:mb-0">
-                        <ul>
-                            {categories.map(category => (
-                                <li key={category} className="mb-4">
-                                    <button
-                                        className={`flex items-center space-x-2 ${selectedCategory === category ? 'bg-[#5a4fcf] text-white' : ''} px-4 py-2 rounded`}
-                                        onClick={() => setSelectedCategory(category)}
-                                    >
-                                        <span>🍛</span>
-                                        <span>{category}</span>
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div className="md:w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {filteredItems.map(item => (
-                            <div key={item.kode_menu} className="bg-white p-4 rounded shadow">
-                                <img src={BurgerImage.src} alt={item.nama_menu} className="w-full rounded mb-4" />
-                                <h2 className="text-xl font-semibold">{item.nama_menu}</h2>
-                                <p className="text-gray-500 mt-2">{item.deskripsi_menu}</p>
-                                <p className="text-[#5a4fcf] mt-2">Rp {item.harga_menu}</p>
-                                <button
-                                    className="bg-blue-500 text-white px-4 py-2 mt-2 rounded"
-                                    onClick={() => addToCart(item)}
-                                >
-                                    Add to Cart
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="bottom-0 left-0 right-0 bg-white p-5 shadow-lg">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <h2 className="text-xl font-semibold">Total: Rp {totalAmount}</h2>
-                            <p>{cart.length} items</p>
+        <div>
+            <Navbar toggleSidebar={toggleSidebar} />
+            <div className="flex">
+                <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <main className="md:ml-56 mx-12 w-full mt-14 pt-10">
+                    <h1 className={`text-3xl font-bold mb-4 ${RobotoBold.className}`}>Explore Our Best Menu</h1>
+                    <p className={`text-sm text-gray-500 mb-8 ${OpenSansFont.className}`}>Pie biological ginger tasty apples taste restaurant drink cupcake vegetables lunch fruit Relish liquor sour java gluten free.</p>
+                    <div className={`flex flex-col md:flex-row ${OpenSansFont.className}`}>
+                        <div className="md:w-1/4 mb-6 md:mb-0">
+                            <ul>
+                                {categories.map(category => (
+                                    <li key={category} className="mb-4">
+                                        <button
+                                            className={`flex items-center space-x-2 ${selectedCategory === category ? 'bg-[#5a4fcf] text-white' : ''} px-4 py-2 rounded`}
+                                            onClick={() => setSelectedCategory(category)}
+                                        >
+                                            <span>🍛</span>
+                                            <span>{category}</span>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
-                        <button
-                            className="bg-green-500 text-white px-4 py-2 rounded"
-                            onClick={handleCheckout}
-                        >
-                            Proceed to Payment
-                        </button>
+                        <div className="md:w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {filteredItems.map(item => (
+                                <div key={item.kode_menu} className="bg-white p-4 rounded shadow">
+                                    <img src={BurgerImage.src} alt={item.nama_menu} className="w-full rounded mb-4" />
+                                    <h2 className="text-xl font-semibold">{item.nama_menu}</h2>
+                                    <p className="text-gray-500 mt-2">{item.deskripsi_menu}</p>
+                                    <p className="text-[#5a4fcf] mt-2">Rp {item.harga_menu}</p>
+                                    <button
+                                        className="bg-blue-500 text-white px-4 py-2 mt-2 rounded"
+                                        onClick={() => addToCart(item)}
+                                    >
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className="mt-4">
-                        {cart.map((cartItem, index) => (
-                            <div key={index} className="flex justify-between items-center mb-2">
-                                <span>{cartItem.item.nama_menu} x {cartItem.quantity}</span>
-                                <span>Rp {parseFloat(cartItem.item.harga_menu as string) * cartItem.quantity}</span>
+                    <div className="bottom-0 left-0 right-0 bg-white p-5 shadow-lg">
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <h2 className="text-xl font-semibold">Total: Rp {totalAmount}</h2>
+                                <p>{cart.length} items</p>
                             </div>
-                        ))}
+                            <button
+                                className="bg-green-500 text-white px-4 py-2 rounded"
+                                onClick={handleCheckout}
+                            >
+                                Proceed to Payment
+                            </button>
+                        </div>
+                        <div className="mt-4">
+                            {cart.map((cartItem, index) => (
+                                <div key={index} className="flex justify-between items-center mb-2">
+                                    <span>{cartItem.item.nama_menu} x {cartItem.quantity}</span>
+                                    <span>Rp {parseFloat(cartItem.item.harga_menu as string) * cartItem.quantity}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                </main>
             </div>
-        </main>
+        </div>
     );
 }

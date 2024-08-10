@@ -2,6 +2,7 @@ import BgLogin from "@/public/assets/img/bg-resto.jpg";
 import "@/app/globals.css";
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
+
 interface DecodedToken {
   userType: string;
 }
@@ -20,9 +21,11 @@ function parseJwt(token: string): DecodedToken {
 
   return JSON.parse(jsonPayload);
 }
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -54,7 +57,7 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch("http://localhost:3001/api/auth/login", {
+    const res = await fetch("https://api.smartresto.xyz/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -82,8 +85,12 @@ export default function Login() {
           console.error("Unknown user type");
       }
     } else {
-      console.error(data.error);
+      setShowErrorModal(true);
     }
+  };
+
+  const closeModal = () => {
+    setShowErrorModal(false);
   };
 
   return (
@@ -167,6 +174,23 @@ export default function Login() {
           <img src={BgLogin.src} alt="Clock" className="max-w-full h-auto" />
         </div>
       </div>
+
+      {showErrorModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h2 className="text-lg font-bold mb-4">Login Failed</h2>
+            <p className="text-gray-700 mb-4">Email dan password salah, coba lagi!</p>
+            <div className="text-right">
+              <button 
+                onClick={closeModal} 
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
