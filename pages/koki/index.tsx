@@ -93,7 +93,7 @@ export default function Koki() {
                 <main className="p-4 pt-20 md:pt-0 bg-gray-100 min-h-screen">
                     {pesanan.length === 0 ? (
                         <div className="text-center flex flex-col justify-center items-center h-full">
-                            <h2 className="text-2xl font-bold text-gray-500">Tidak ada pesanan dengan status butuh dimasak</h2>
+                            <h2 className="text-2xl font-bold pt-36 text-gray-500">Tidak ada pesanan dengan status butuh dimasak</h2>
                         </div>
                     ) : (
                         <div className="flex justify-center">
