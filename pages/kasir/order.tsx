@@ -136,7 +136,7 @@ export default function Order() {
                             ))}
                         </div>
                     ) : (
-                        <p className="text-gray-500 text-center">Tidak ada pesanan dengan status "bayar" saat ini.</p>
+                        <p className="text-gray-500 text-center">Tidak ada pesanan dengan status &quot;bayar&quot; saat ini.</p>
                     )}
                 </main>
 
